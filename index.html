@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scheda di Valutazione Psicologica</title>
+  <meta name="description" content="Scheda professionale di valutazione psicologica con compilazione online e generazione PDF." />
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#1e293b;
+      --muted:#64748b;
+      --line:#dbe4ee;
+      --accent:#1f4f7a;
+      --accent-2:#2d6ea3;
+      --soft:#edf4fa;
+      --danger:#9b1c1c;
+      --shadow:0 18px 45px rgba(15,23,42,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#eef4fb 0%,#f8fafc 100%);color:var(--text)}
+    body{padding:22px}
+    .container{max-width:1050px;margin:0 auto}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+    .brand{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:20px 22px;flex:1 1 640px}
+    .brand h1{margin:0 0 8px;font-size:clamp(1.55rem,2.5vw,2.35rem);letter-spacing:.2px}
+    .brand p{margin:0;color:var(--muted);line-height:1.6}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-self:stretch}
+    button{border:none;border-radius:14px;padding:14px 18px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s transform,.2s opacity,.2s background}
+    button:hover{transform:translateY(-1px)}
+    .primary{background:var(--accent);color:#fff}
+    .danger{background:#fff1f1;color:var(--danger);border:1px solid #f2c8c8}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .card-header{padding:20px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fbfdff 0%,#f6fafe 100%)}
+    .card-header h2{margin:0 0 8px;font-size:1.2rem}
+    .card-header p{margin:0;color:var(--muted);line-height:1.55}
+    .card-body{padding:22px}
+    .meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    @media (max-width:600px){.meta-grid{grid-template-columns:1fr}}
+    .field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    label{font-weight:700;font-size:.96rem}
+    input, textarea{
+      width:100%;padding:14px 14px;border:1px solid #cfd9e4;border-radius:14px;background:#fff;color:var(--text);
+      outline:none;font:inherit;transition:border-color .18s, box-shadow .18s
+    }
+    input:focus, textarea:focus{border-color:var(--accent-2);box-shadow:0 0 0 4px rgba(45,110,163,.12)}
+    textarea{min-height:116px;resize:vertical;line-height:1.55}
+    .section{margin-bottom:20px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
+    .section-title{padding:16px 18px;background:var(--soft);border-bottom:1px solid var(--line)}
+    .section-title h3{margin:0;font-size:1.05rem}
+    .section-title p{margin:6px 0 0;color:var(--muted);line-height:1.5;font-size:.94rem}
+    .q-wrap{padding:18px}
+    .question{padding:0 0 18px;margin:0 0 18px;border-bottom:1px dashed #d9e3ed}
+    .question:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none}
+    .question h4{margin:0 0 8px;font-size:1rem;line-height:1.45}
+    .progress{margin-top:8px;height:12px;background:#e8eef5;border-radius:999px;overflow:hidden}
+    .progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s}
+    .stats{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:.92rem}
+    .mini-card{background:#f8fbff;border:1px solid var(--line);border-radius:16px;padding:16px}
+    .mini-card h4{margin:0 0 8px}
+    .mini-card p{margin:0;color:var(--muted);line-height:1.55}
+    .success{display:none;margin-top:14px;background:#eefbf3;border:1px solid #c9ecd5;color:#1d6b3b;padding:14px 16px;border-radius:14px}
+    .loading{display:none;margin-top:14px;background:#eef4fb;border:1px solid #c9dcee;color:#214c74;padding:14px 16px;border-radius:14px}
+    @media print{
+      body{background:#fff;padding:0}
+      .topbar,.side-col,.success,.loading{display:none !important}
+      .grid{display:block}
+      .card,.section{box-shadow:none;border:1px solid #ddd}
+      textarea,input{border:none;padding:0;background:#fff}
+      .question, .section{break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <h1>Scheda di Valutazione Psicologica</h1>
+        <p>
+          Modulo professionale di raccolta informazioni e riflessione personale, pensato per la compilazione online
+          e per la generazione di un documento PDF con domande e risposte del paziente o cliente.
+        </p>
+      </div>
+      <div class="actions">
+        <button class="primary" id="downloadPdfBtn" type="button">Scarica PDF</button>
+        <button class="danger" id="clearBtn" type="button">Cancella risposte</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="main-col">
+        <form id="assessmentForm">
+          <div class="card">
+            <div class="card-header">
+              <h2>Dati del paziente / cliente</h2>
+              <p>Compilare i campi principali prima di procedere con la scheda.</p>
+            </div>
+            <div class="card-body">
+              <div class="meta-grid">
+                <div class="field">
+                  <label for="clientName">Nome e cognome</label>
+                  <input id="clientName" name="clientName" type="text" placeholder="Inserire nome e cognome" />
+                </div>
+                <div class="field">
+                  <label for="assessmentDate">Data di compilazione</label>
+                  <input id="assessmentDate" name="assessmentDate" type="date" />
+                </div>
+                <div class="field">
+                  <label for="dob">Data di nascita</label>
+                  <input id="dob" name="dob" type="date" />
+                </div>
+                <div class="field">
+                  <label for="clinicianName">Professionista / Studio</label>
+                  <input id="clinicianName" name="clinicianName" type="text" placeholder="Nome del professionista o dello studio" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="presentingConcern">Motivo della compilazione / richiesta di supporto</label>
+                <textarea id="presentingConcern" name="presentingConcern" placeholder="Descrivere brevemente il motivo della compilazione della scheda"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <h3>Sezione 1 — Identità personale</h3>
+              <p>Area dedicata alla percezione di sé, alle qualità personali e al proprio modo di definirsi.</p>
+            </div>
+            <div class="q-wrap">
+              <div class="question"><h4>1. Come si descriverebbe in questo momento della sua vita?</h4><textarea name="q1" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>2. Quali ritiene siano le sue qualità, capacità o punti di forza principali?</h4><textarea name="q2" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>3. C’è un’attività che le dà coinvolgimento, soddisfazione o senso di pienezza? Se sì, quale?</h4><textarea name="q3" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>4. Quali aspetti della sua vita sente oggi come più importanti?</h4><textarea name="q4" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>5. In quali aspetti si sente simile o diverso rispetto alla sua famiglia, alle persone vicine o al suo contesto sociale?</h4><textarea name="q5" placeholder="Scriva qui la sua risposta..."></textarea></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <h3>Sezione 2 — Senso, valori e direzione di vita</h3>
+              <p>Domande orientate alla visione personale della vita, ai valori e al significato attribuito alla propria esperienza.</p>
+            </div>
+            <div class="q-wrap">
+              <div class="question"><h4>6. In questo periodo della sua vita, che significato attribuisce all’esistenza?</h4><textarea name="q6" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>7. Quali valori considera fondamentali nel suo modo di vivere e di relazionarsi con gli altri?</h4><textarea name="q7" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>8. Come vorrebbe essere ricordato dalle persone che per lei contano?</h4><textarea name="q8" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>9. Quale tipo di contributo o traccia vorrebbe lasciare nella vita degli altri?</h4><textarea name="q9" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>10. Come interpreta la sofferenza, sia personale sia presente nel mondo?</h4><textarea name="q10" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>11. Ritiene che vi sia una responsabilità personale nell’aiutare chi vive una situazione di sofferenza?</h4><textarea name="q11" placeholder="Scriva qui la sua risposta..."></textarea></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <h3>Sezione 3 — Relazioni, fiducia e vissuti di solitudine</h3>
+              <p>Questa parte esplora la qualità dei legami affettivi, il senso di vicinanza e la capacità di esprimersi con autenticità.</p>
+            </div>
+            <div class="q-wrap">
+              <div class="question"><h4>12. Chi sono oggi le persone più importanti nella sua vita?</h4><textarea name="q12" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>13. Quanto tempo riesce a condividere con loro e come descriverebbe questi momenti?</h4><textarea name="q13" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>14. Ha la sensazione di essere realmente compreso dalle persone a lei più vicine?</h4><textarea name="q14" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>15. Riesce ad esprimersi con sincerità e libertà nelle relazioni di fiducia?</h4><textarea name="q15" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>16. Quali ostacoli incontra quando vorrebbe aprirsi in modo autentico con gli altri?</h4><textarea name="q16" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>17. Quando avverte solitudine, di che cosa sente maggiormente il bisogno?</h4><textarea name="q17" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>18. Quanto conta per lei il rispetto di valori come sincerità, correttezza e attenzione verso l’altro?</h4><textarea name="q18" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>19. Nel prendere decisioni personali, tiene conto anche dei valori e dei punti di vista delle persone che la circondano?</h4><textarea name="q19" placeholder="Scriva qui la sua risposta..."></textarea></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <h3>Sezione 4 — Dimensione interiore, spirituale ed esistenziale</h3>
+              <p>Area dedicata alle convinzioni personali sulla dimensione più profonda dell’essere, sulla vita e sulla morte.</p>
+            </div>
+            <div class="q-wrap">
+              <div class="question"><h4>20. Qual è il suo pensiero rispetto alla morte e a ciò che potrebbe esserci dopo?</h4><textarea name="q20" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>21. Ritiene che nell’essere umano esista una dimensione interiore o spirituale che cerca connessione, significato o trascendenza?</h4><textarea name="q21" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>22. Come immagina il destino di questa parte interiore dell’essere umano dopo la morte?</h4><textarea name="q22" placeholder="Scriva qui la sua risposta..."></textarea></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <h3>Sezione 5 — Riflessione conclusiva</h3>
+              <p>Spazio finale per raccogliere ciò che emerge dalla compilazione della scheda.</p>
+            </div>
+            <div class="q-wrap">
+              <div class="question"><h4>23. Dopo aver completato questa scheda, quali pensieri, emozioni o aspetti personali sente emergere con maggiore chiarezza?</h4><textarea name="q23" placeholder="Scriva qui la sua risposta..."></textarea></div>
+              <div class="question"><h4>24. C’è qualcosa di importante che desidera far comprendere al professionista che leggerà questo documento?</h4><textarea name="q24" placeholder="Scriva qui la sua risposta..."></textarea></div>
+            </div>
+          </div>
+
+          <div class="success" id="saveMessage">Le risposte sono state salvate in questo browser.</div>
+          <div class="loading" id="loadingMessage">Preparazione del PDF in corso...</div>
+        </form>
+      </div>
+
+      <div class="side-col">
+        <div class="card">
+          <div class="card-header">
+            <h2>Stato compilazione</h2>
+            <p>Monitoraggio rapido dell’avanzamento della scheda.</p>
+          </div>
+          <div class="card-body">
+            <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="stats">
+              <div><strong id="answeredCount">0</strong> risposte</div>
+              <div><strong id="totalCount">24</strong> domande</div>
+              <div><strong id="progressText">0%</strong> completato</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header">
+            <h2>Istruzioni rapide</h2>
+            <p>Indicazioni semplici per la compilazione e l’esportazione del documento.</p>
+          </div>
+          <div class="card-body">
+            <div class="mini-card">
+              <h4>Compilazione online</h4>
+              <p>Il paziente o cliente può compilare l’intera scheda direttamente dal telefono, tablet o computer.</p>
+            </div>
+            <div class="mini-card" style="margin-top:12px;">
+              <h4>Salvataggio automatico</h4>
+              <p>Le risposte vengono mantenute nel browser durante la compilazione, così da non perdere il lavoro già svolto.</p>
+            </div>
+            <div class="mini-card" style="margin-top:12px;">
+              <h4>Esportazione PDF</h4>
+              <p>Il pulsante “Scarica PDF” genera un file con tutti i dati inseriti, incluse domande e risposte.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const form = document.getElementById('assessmentForm');
+    const progressBar = document.getElementById('progressBar');
+    const answeredCount = document.getElementById('answeredCount');
+    const progressText = document.getElementById('progressText');
+    const saveMessage = document.getElementById('saveMessage');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const allInputs = Array.from(form.querySelectorAll('input, textarea'));
+    const questionFields = Array.from(form.querySelectorAll('textarea[name^="q"]'));
+    const STORAGE_KEY = 'scheda_valutazione_psicologica_it_v2';
+
+    const questionLabels = {
+      q1: "Come si descriverebbe in questo momento della sua vita?",
+      q2: "Quali ritiene siano le sue qualità, capacità o punti di forza principali?",
+      q3: "C’è un’attività che le dà coinvolgimento, soddisfazione o senso di pienezza? Se sì, quale?",
+      q4: "Quali aspetti della sua vita sente oggi come più importanti?",
+      q5: "In quali aspetti si sente simile o diverso rispetto alla sua famiglia, alle persone vicine o al suo contesto sociale?",
+      q6: "In questo periodo della sua vita, che significato attribuisce all’esistenza?",
+      q7: "Quali valori considera fondamentali nel suo modo di vivere e di relazionarsi con gli altri?",
+      q8: "Come vorrebbe essere ricordato dalle persone che per lei contano?",
+      q9: "Quale tipo di contributo o traccia vorrebbe lasciare nella vita degli altri?",
+      q10: "Come interpreta la sofferenza, sia personale sia presente nel mondo?",
+      q11: "Ritiene che vi sia una responsabilità personale nell’aiutare chi vive una situazione di sofferenza?",
+      q12: "Chi sono oggi le persone più importanti nella sua vita?",
+      q13: "Quanto tempo riesce a condividere con loro e come descriverebbe questi momenti?",
+      q14: "Ha la sensazione di essere realmente compreso dalle persone a lei più vicine?",
+      q15: "Riesce ad esprimersi con sincerità e libertà nelle relazioni di fiducia?",
+      q16: "Quali ostacoli incontra quando vorrebbe aprirsi in modo autentico con gli altri?",
+      q17: "Quando avverte solitudine, di che cosa sente maggiormente il bisogno?",
+      q18: "Quanto conta per lei il rispetto di valori come sincerità, correttezza e attenzione verso l’altro?",
+      q19: "Nel prendere decisioni personali, tiene conto anche dei valori e dei punti di vista delle persone che la circondano?",
+      q20: "Qual è il suo pensiero rispetto alla morte e a ciò che potrebbe esserci dopo?",
+      q21: "Ritiene che nell’essere umano esista una dimensione interiore o spirituale che cerca connessione, significato o trascendenza?",
+      q22: "Come immagina il destino di questa parte interiore dell’essere umano dopo la morte?",
+      q23: "Dopo aver completato questa scheda, quali pensieri, emozioni o aspetti personali sente emergere con maggiore chiarezza?",
+      q24: "C’è qualcosa di importante che desidera far comprendere al professionista che leggerà questo documento?"
+    };
+
+    function saveForm() {
+      const data = {};
+      allInputs.forEach(el => data[el.name] = el.value);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      saveMessage.style.display = 'block';
+      setTimeout(() => saveMessage.style.display = 'none', 1500);
+      updateProgress();
+    }
+
+    function loadForm() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        allInputs.forEach(el => {
+          if (data[el.name] !== undefined) el.value = data[el.name];
+        });
+      } catch (e) {}
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const answered = questionFields.filter(el => el.value.trim().length > 0).length;
+      const total = questionFields.length;
+      const percent = Math.round((answered / total) * 100);
+      answeredCount.textContent = answered;
+      progressText.textContent = percent + '%';
+      progressBar.style.width = percent + '%';
+    }
+
+    function clearForm() {
+      if (!confirm('Vuole cancellare tutte le risposte inserite?')) return;
+      allInputs.forEach(el => el.value = '');
+      localStorage.removeItem(STORAGE_KEY);
+      updateProgress();
+    }
+
+    function addWrappedText(doc, text, x, y, maxWidth, lineHeight) {
+      const lines = doc.splitTextToSize(String(text || ''), maxWidth);
+      doc.text(lines, x, y);
+      return y + lines.length * lineHeight;
+    }
+
+    async function waitForJsPdf(maxWaitMs = 4000) {
+      const start = Date.now();
+      while (Date.now() - start < maxWaitMs) {
+        if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+        await new Promise(resolve => setTimeout(resolve, 120));
+      }
+      return null;
+    }
+
+    async function generatePDF() {
+      loadingMessage.style.display = 'block';
+      const jsPDFCtor = await waitForJsPdf();
+
+      if (!jsPDFCtor) {
+        loadingMessage.style.display = 'none';
+        alert('La libreria PDF non è stata caricata correttamente. Verifichi la connessione internet oppure riprovi tra qualche secondo.');
+        return;
+      }
+
+      try {
+        const doc = new jsPDFCtor({ unit: 'pt', format: 'a4' });
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 42;
+        const maxWidth = pageWidth - margin * 2;
+        let y = 48;
+
+        function newPageIfNeeded(spaceNeeded = 80) {
+          if (y + spaceNeeded > pageHeight - 50) {
+            doc.addPage();
+            y = 48;
+          }
+        }
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(19);
+        doc.text('Scheda di Valutazione Psicologica', margin, y);
+        y += 24;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        y = addWrappedText(doc, 'Documento generato dalla compilazione online della scheda di valutazione.', margin, y, maxWidth, 14);
+        y += 10;
+
+        const meta = [
+          ['Nome e cognome', document.getElementById('clientName').value || '-'],
+          ['Data di compilazione', document.getElementById('assessmentDate').value || '-'],
+          ['Data di nascita', document.getElementById('dob').value || '-'],
+          ['Professionista / Studio', document.getElementById('clinicianName').value || '-'],
+          ['Motivo della compilazione', document.getElementById('presentingConcern').value || '-']
+        ];
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.text('Dati del paziente / cliente', margin, y);
+        y += 18;
+
+        doc.setFontSize(10);
+        meta.forEach(([label, value]) => {
+          newPageIfNeeded(50);
+          doc.setFont('helvetica', 'bold');
+          doc.text(label + ':', margin, y);
+          y += 12;
+          doc.setFont('helvetica', 'normal');
+          y = addWrappedText(doc, value, margin, y, maxWidth, 14);
+          y += 10;
+        });
+
+        const sectionTitles = {
+          1: 'Sezione 1 — Identità personale',
+          6: 'Sezione 2 — Senso, valori e direzione di vita',
+          12: 'Sezione 3 — Relazioni, fiducia e vissuti di solitudine',
+          20: 'Sezione 4 — Dimensione interiore, spirituale ed esistenziale',
+          23: 'Sezione 5 — Riflessione conclusiva'
+        };
+
+        Object.entries(questionLabels).forEach(([key, label], index) => {
+          const num = index + 1;
+          if (sectionTitles[num]) {
+            newPageIfNeeded(60);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13);
+            doc.text(sectionTitles[num], margin, y);
+            y += 18;
+          }
+
+          newPageIfNeeded(75);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          y = addWrappedText(doc, num + '. ' + label, margin, y, maxWidth, 14);
+          y += 6;
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          const answer = (form.querySelector(`[name="${key}"]`)?.value || '').trim() || 'Nessuna risposta inserita.';
+          y = addWrappedText(doc, 'Risposta: ' + answer, margin, y, maxWidth, 14);
+          y += 14;
+        });
+
+        const filenameBase = (document.getElementById('clientName').value || 'scheda-valutazione')
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/gi, '-')
+          .replace(/^-+|-+$/g, '');
+
+        doc.save(filenameBase + '.pdf');
+      } catch (err) {
+        console.error(err);
+        alert('Si è verificato un problema durante la generazione del PDF.');
+      } finally {
+        loadingMessage.style.display = 'none';
+      }
+    }
+
+    allInputs.forEach(el => el.addEventListener('input', saveForm));
+    document.getElementById('clearBtn').addEventListener('click', clearForm);
+    document.getElementById('downloadPdfBtn').addEventListener('click', generatePDF);
+
+    if (!document.getElementById('assessmentDate').value) {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('assessmentDate').value = today;
+    }
+
+    loadForm();
+    updateProgress();
+  </script>
+</body>
+</html>
